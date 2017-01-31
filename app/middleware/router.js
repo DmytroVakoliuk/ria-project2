@@ -1,7 +1,7 @@
 "use strict";
+
 module.exports = function(app) {
     const Router = require('koa-router');
-    // const path = require('path');
     const router = new Router();
     const bodyParser = require('koa-bodyparser');
 
@@ -19,6 +19,10 @@ module.exports = function(app) {
      */
     router.post('/users/:userId/purchases', bodyParser(), myController.post);
 
+    /**
+     * @example curl -v -X DELETE "http://127.0.0.1:3000/users/1/purchases"
+     */
+    router.del("/users/:userId/purchases", myController.del);
 
     app.use(async(ctx, next) => {
         try {

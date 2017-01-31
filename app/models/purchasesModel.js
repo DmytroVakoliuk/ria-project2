@@ -15,7 +15,7 @@ module.exports = function () {
          * @example curl -v -X GET "http://127.0.0.1:3000/users/2/purchases"
          */
         getAction: (id) => {
-            return new Promise((resolve, reject)=>{
+            return new Promise((resolve, reject) => {
                 try {
                     // console.log(typeof(id));
                     let userId = Number(id);
@@ -24,30 +24,23 @@ module.exports = function () {
                             // console.log("Error");
                             reject(err);
                         } else {
-                            let value = JSON.parse(data);
+                            try {
+                                // users = JSON.parse(content.toString())
+                                let value = JSON.parse(data);
+                                resolve(value.count.toString());
+
+                            } catch (e) {
+                                reject("error");
+                            }
+
                             // console.log(value);
-                            resolve(value.count.toString());
                         }
                     });
-                }catch(e){
+                } catch (e) {
                     console.log("Catch");
                     reject(e);
                 }
             });
-
-
-
-/*            let userId = getUserId(req);
-
-            memcached.get(userId, function (err, data) {
-                if (data) {
-                    let value = JSON.parse(data);
-                    res.end(value.count.toString());
-                } else {
-                    // console.log('Cannot read data');
-                    res.end("invalid data");
-                }
-            });*/
 
         },
 
@@ -55,8 +48,8 @@ module.exports = function () {
          * @example curl -v -X POST "http://127.0.0.1:3000/users/2/purchases" -d '{"count":10}' -H "Content-Type: application/json"
          */
 
-        postAction: (id, body)=>{
-            return new Promise((resolve, reject)=>{
+        postAction: (id, body) => {
+            return new Promise((resolve, reject) => {
                 try {
                     let count = JSON.stringify(body);
                     let userId = Number(getUserId(id));
@@ -65,11 +58,10 @@ module.exports = function () {
                             // console.log("Error");
                             reject(err);
                         } else {
-                            // console.log(userId);
                             resolve(userId);
                         }
                     });
-                }catch(e){
+                } catch (e) {
                     console.log("Catch");
                     reject(e);
                 }
@@ -77,31 +69,36 @@ module.exports = function () {
         },
 
 
-
-
         /**
          * @example curl -v -X DELETE "http://127.0.0.1:3000/users/2/purchases"
          */
-        deleteAction: function (req, res) {
-            let userId = getUserId(req);
-            if (userId) {
-                memcached.get(userId, function (err, data) {
-                    if (data) {
-                        memcached.del(userId, function (err) {
-                            console.log(err);
-                            if (err) {
-                                res.end('Error --> Cannot delete a value in memcached');
+        deleteAction: (id) => {
+            return new Promise((resolve, reject) => {
+                try {
+                    let userId = Number(id);
+                    if (userId) {
+                        memcached.get(id, function (err, data) {
+                            if (data) {
+                                memcached.del(id, function (err) {
+                                    console.log(err);
+                                    if (err) {
+                                        reject('Error --> Cannot delete a value in memcached');
+                                    } else {
+                                        resolve("OK");
+                                    }
+                                });
                             } else {
-                                res.end("OK");
+                                reject("invalid data");
                             }
                         });
                     } else {
-                        res.end("invalid data");
+                        reject("Invalid userId");
                     }
-                });
-            } else {
-                res.end("Invalid userId");
-            }
+                } catch (e) {
+                    console.log("Catch");
+                    reject(e);
+                }
+            })
         }
     }
 };

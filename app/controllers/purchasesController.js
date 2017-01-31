@@ -8,7 +8,8 @@ module.exports = function (app) {
             if (typeof userId === 'number') {
                 // console.log('2001: ' + userId);
                 ctx.status = 201;
-                ctx.body = {"id": userId};
+                // ctx.body = {"id": userId};
+                ctx.body = "Ok";
             } else {
                 console.log('400: ' + userId);
                 ctx.status = 400;
@@ -16,10 +17,17 @@ module.exports = function (app) {
         },
 
         get: async(ctx, next) => {
-            // console.log('ctx:');
-            // console.log(ctx.params.UserId);
             ctx.body = await pModel.getAction(ctx.params.UserId);
-        }
+        },
 
+
+        del: async(ctx, next) => {
+            try {
+                await pModel.deleteAction(ctx.params.userId)
+                ctx.status = 204;
+            } catch (e) {
+                ctx.status = 400
+            }
+        },
     }
 };
