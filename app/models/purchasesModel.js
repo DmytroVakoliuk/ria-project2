@@ -17,27 +17,21 @@ module.exports = function () {
         getAction: (id) => {
             return new Promise((resolve, reject) => {
                 try {
-                    // console.log(typeof(id));
                     let userId = Number(id);
                     memcached.get(userId, function (err, data) {
                         if (err) {
-                            // console.log("Error");
                             reject(err);
                         } else {
                             try {
-                                // users = JSON.parse(content.toString())
                                 let value = JSON.parse(data);
                                 resolve(value.count.toString());
-
                             } catch (e) {
                                 reject("error");
                             }
-
-                            // console.log(value);
                         }
                     });
                 } catch (e) {
-                    console.log("Catch");
+                    // console.log("Catch");
                     reject(e);
                 }
             });
@@ -47,7 +41,6 @@ module.exports = function () {
         /**
          * @example curl -v -X POST "http://127.0.0.1:3000/users/2/purchases" -d '{"count":10}' -H "Content-Type: application/json"
          */
-
         postAction: (id, body) => {
             return new Promise((resolve, reject) => {
                 try {
@@ -68,7 +61,6 @@ module.exports = function () {
             })
         },
 
-
         /**
          * @example curl -v -X DELETE "http://127.0.0.1:3000/users/2/purchases"
          */
@@ -76,26 +68,22 @@ module.exports = function () {
             return new Promise((resolve, reject) => {
                 try {
                     let userId = Number(id);
-                    if (userId) {
-                        memcached.get(id, function (err, data) {
-                            if (data) {
-                                memcached.del(id, function (err) {
-                                    console.log(err);
-                                    if (err) {
-                                        reject('Error --> Cannot delete a value in memcached');
-                                    } else {
-                                        resolve("OK");
-                                    }
-                                });
-                            } else {
-                                reject("invalid data");
-                            }
-                        });
-                    } else {
-                        reject("Invalid userId");
-                    }
+                    memcached.get(id, function (err, data) {
+                        if (data) {
+                            memcached.del(id, function (err) {
+                                console.log(err);
+                                if (err) {
+                                    reject('Error --> Cannot delete a value in memcached');
+                                } else {
+                                    resolve("OK");
+                                }
+                            });
+                        } else {
+                            reject("invalid data");
+                        }
+                    });
                 } catch (e) {
-                    console.log("Catch");
+                    // console.log("Catch");
                     reject(e);
                 }
             })

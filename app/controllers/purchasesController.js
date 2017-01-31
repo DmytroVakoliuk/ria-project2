@@ -6,9 +6,7 @@ module.exports = function (app) {
         post: async(ctx, next) => {
             let userId = await pModel.postAction(ctx.url, ctx.request.body);
             if (typeof userId === 'number') {
-                // console.log('2001: ' + userId);
                 ctx.status = 201;
-                // ctx.body = {"id": userId};
                 ctx.body = "Ok";
             } else {
                 console.log('400: ' + userId);
@@ -17,7 +15,13 @@ module.exports = function (app) {
         },
 
         get: async(ctx, next) => {
-            ctx.body = await pModel.getAction(ctx.params.UserId);
+            try {
+                ctx.body = await pModel.getAction(ctx.params.UserId);
+                ctx.status = 200;
+            } catch (e) {
+                ctx.status = 400
+            }
+
         },
 
 
