@@ -28,6 +28,7 @@ module.exports = function (app) {
         del: async(ctx, next) => {
             try {
                 await pModel.deleteAction(ctx.params.userId)
+                ctx.body = "Ok";
                 ctx.status = 204;
             } catch (e) {
                 ctx.status = 400
